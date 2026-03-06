@@ -11,16 +11,16 @@
         "label": "Parallel web systems",
 
         // description: longer string to help end users understand what this plugin does
-        "description": "",
+        "description": "Dataset connector for Parallel Web Systems APIs",
 
         "author": "shashank.gaur",
 
         // icon: must be one of the FontAwesome 5.15.4 icons, complete list here at https://fontawesome.com/v5/docs/
-        "icon": "fas fa-puzzle-piece",
+        "icon": "icon-globe",
 
         // recipesCategory: optional, can be one of 'visual', 'code', 'genai' or 'other'
         // defines the category of the plugin in the right panel
-        "recipesCategory": "",
+        "recipesCategory": "visual",
 
         // List of tags for filtering the list of plugins
         "tags": [], //for example: ["Machine Learning", "NLP"]

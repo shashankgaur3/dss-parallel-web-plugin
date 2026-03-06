@@ -1,64 +1,139 @@
 /* This file is the descriptor for the Custom python dataset parallel-web-systems_web-dataset-generator */
 {
     "meta" : {
-        // label: name of the dataset type as displayed, should be short
-        "label": "Web dataset generator",
-
-        // description: longer string to help end users understand what this dataset type is
-        "description": "",
-
-        // icon: must be one of the FontAwesome 5.15.4 icons, complete list here at https://fontawesome.com/v5/docs/
-        "icon": "fas fa-puzzle-piece"
+        "label": "Parallel FindAll Dataset",
+        "description": "Fetch structured web data with Parallel FindAll API",
+        "icon": "fas fa-globe"
     },
 
-    /* Can this connector read data ? */
     "readable": true,
-    /* Can this connector write data ? */
     "writable": false,
-    /* Can this connector append data instead of overwriting it ? */
     "supportAppend": false,
 
-
-    /* params:
-    DSS will generate a formular from this list of requested parameters.
-    Your component code can then access the value provided by users using the "name" field of each parameter.
-
-    Available parameter types include:
-    STRING, INT, DOUBLE, BOOLEAN, DATE, SELECT, TEXTAREA, PRESET and others.
-
-    For the full list and for more details, see the documentation: https://doc.dataiku.com/dss/latest/plugins/reference/params.html
-    */
     "params": [
         {
-            "name": "parameter1",
-            "label": "User-readable name",
-            "type": "STRING",
-            "description": "Some documentation for parameter1",
-            "mandatory": true
+            "name": "api_auth",
+            "label": "Parallel API Auth Preset",
+            "type": "PRESET",
+            "parameterSetId": "parallel-api-key",
+            "mandatory": true,
+            "description": "Select a preset from the 'parallel-api-key' parameter set"
         },
         {
-            "name": "parameter2",
-            "type": "INT",
-            "defaultValue" : 42
-            /* Note that standard json parsing will return it as a double in Python (instead of an int), so you need to write
-               int(self.config()['parameter2'])
-            */
+            "name": "objective",
+            "label": "Objective",
+            "type": "TEXTAREA",
+            "mandatory": true,
+            "description": "Natural-language objective for FindAll ingest"
         },
-
-        /* A "SELECT" parameter is a multi-choice selector. Choices are specified using the selectChoice field*/
         {
-            "name": "parameter8",
+            "name": "generator",
+            "label": "Generator",
             "type": "SELECT",
+            "defaultValue": "base",
             "selectChoices": [
                 {
-                    "value": "val_x",
-                    "label": "display name for val_x"
+                    "value": "preview",
+                    "label": "preview"
                 },
                 {
-                    "value": "val_y",
-                    "label": "display name for val_y"
+                    "value": "base",
+                    "label": "base"
+                },
+                {
+                    "value": "core",
+                    "label": "core"
+                },
+                {
+                    "value": "pro",
+                    "label": "pro"
                 }
             ]
+        },   
+        {
+            "name": "match_limit",
+            "label": "Match Limit",
+            "type": "INT",
+            "defaultValue": 10
+        },
+        {
+            "name": "enable_enrichments",
+            "label": "Enable Enrichments",
+            "type": "BOOLEAN",
+            "defaultValue": false
+        },
+        {
+            "name": "enrichment_fields",
+            "label": "Enrichment Fields",
+            "type": "OBJECT_LIST",
+            "visibilityCondition": "model.enable_enrichments",
+            "description": "Optional enrichment output fields as a structured list",
+            "subParams": [
+                {
+                    "name": "name",
+                    "label": "Column name",
+                    "type": "STRING",
+                    "mandatory": true
+                },
+                {
+                    "name": "type",
+                    "label": "Type",
+                    "type": "SELECT",
+                    "mandatory": true,
+                    "defaultValue": "string",
+                    "selectChoices": [
+                        {
+                            "value": "string",
+                            "label": "string"
+                        },
+                        {
+                            "value": "int",
+                            "label": "int"
+                        },
+                        {
+                            "value": "float",
+                            "label": "float"
+                        },
+                        {
+                            "value": "bool",
+                            "label": "bool"
+                        }
+                    ]
+                },
+                {
+                    "name": "description",
+                    "label": "Description",
+                    "type": "STRING",
+                    "mandatory": true
+                }
+            ]
+        },
+        {
+            "name": "advanced_settings",
+            "label": "Advanced settings",
+            "type": "BOOLEAN",
+            "defaultValue": false
+        },
+        {
+            "name": "poll_interval_seconds",
+            "label": "Poll Interval (s)",
+            "type": "INT",
+            "defaultValue": 5,
+            "visibilityCondition": "model.advanced_settings"
+        },
+        {
+            "name": "max_wait_seconds",
+            "label": "Max Wait (s)",
+            "type": "INT",
+            "defaultValue": 300,
+            "visibilityCondition": "model.advanced_settings"
+        },{
+            "name": "include_citations",
+            "label": "Include Citations",
+            "type": "BOOLEAN",
+            "defaultValue": false,
+            "visibilityCondition": "model.advanced_settings",
+            "description": "When enabled, include candidate basis/citation & reasoning details in a spearate column."
         }
     ]
 }

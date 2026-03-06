@@ -1,0 +1,19 @@
+{
+    "meta" : {
+        "label": "Parallel API Authentication",
+        "description": "Parallel API key to use for Authentication with Parallel API"
+    },
+    "defaultDefinableInline": false,
+    "defaultDefinableAtProjectLevel": false,
+    "pluginParams": [
+    ],
+
+    "params": [
+        {
+            "name": "parallel-api-key",
+            "label": "API Key",
+            "type": "PASSWORD",
+            "mandatory": true
+        }
+    ]
+}
