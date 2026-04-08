@@ -172,6 +172,8 @@ The tool uses Parallel's Search API to:
 
 Configure the tool in **Plugins** → **Parallel web systems** → **Parallel Web Search**:
 
+![Parallel Web Search Tool Configuration](assets/parallel-web-search-tool-config.png)
+
 #### Required Settings
 
 - **Parallel API Auth Preset**: Select your configured API key preset (e.g., "api-key")
@@ -186,6 +188,8 @@ Configure the tool in **Plugins** → **Parallel web systems** → **Parallel We
 - **Max Results**: Maximum number of search results to return (1-20, default: 5)
 
 - **Max Characters Per Excerpt**: Maximum characters per excerpt from each result (100-10000, default: 1000)
+
+- **Description for LLM** (Optional): Custom description that will be appended to the tool's internal description for the AI agent
 
 ### Usage in AI Agents
 
