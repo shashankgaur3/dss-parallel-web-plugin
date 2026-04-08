@@ -137,40 +137,14 @@ You can use the enrichment recipe to add information to an existing dataset gene
 3. **Error Tracking**: Enable "Continue on Error" to avoid losing progress on large datasets
 4. **Batch Processing**: Use smaller batch sizes for very large datasets to see progress more frequently
 
-### Performance Considerations
-
-- Processing time depends on the complexity of the enrichment task and the processor selected
-- Consider the API rate limits when processing large datasets
-- Learn more about choosing the right processor: [Parallel AI Processor Guide](https://docs.parallel.ai/task-api/guides/choose-a-processor)
-
-### Troubleshooting
-
-**Issue**: Recipe fails with "API key not configured"
-- **Solution**: Ensure you have created a Parallel API key preset in the plugin settings
-
-**Issue**: Tasks are timing out
-- **Solution**: Increase the "Max Wait Time" setting or simplify your output field definitions
-
-**Issue**: Empty output values
-- **Solution**: Check the `_enrichment_error` column (if "Continue on Error" is enabled) for error messages. Verify that your input columns contain valid data.
-
----
 
 ## Parallel Web Search Agent Tool
 
-This agent tool enables Dataiku AI agents to search the web intelligently using Parallel's Search API. The tool provides relevant web pages with titles, URLs, and text excerpts that agents can use to answer questions and gather information.
-
-### How It Works
-
-The tool uses Parallel's Search API to:
-1. Accept a natural language objective from the AI agent
-2. Execute intelligent web searches based on the objective
-3. Return relevant results with excerpts from web pages
-4. Provide source attribution for traceability
+This agent tool enables Dataiku AI agents to search the web intelligently using Parallel's Search API. 
 
 ### Configuration
 
-Configure the tool in **Plugins** → **Parallel web systems** → **Parallel Web Search**:
+Configure the tool in your project **Agent Tools** → **New Agent Tool** → **Parallel web search** :
 
 ![Parallel Web Search Tool Configuration](assets/parallel-web-search-tool-config.png)
 
@@ -197,44 +171,9 @@ Once configured, the tool becomes available to your Dataiku AI agents. The agent
 
 - **objective**: A clear description of what information to find
 
-**Example agent queries:**
-- "When was the United Nations established? Prefer UN's websites."
-- "What are the latest developments in quantum computing?"
-- "Find information about renewable energy policies in California"
+## Performance Considerations
 
-### Example Output
-
-When an agent uses the tool, it receives structured results like:
-
-```
-Found 3 result(s) for objective: 'When was the United Nations established? Prefer UN's websites.'
-
-**United Nations - History**
-URL: https://www.un.org/en/about-us/history-of-the-un
-
-Excerpts:
-1. The United Nations officially came into existence on 24 October 1945, when the Charter had been ratified by China, France, the Soviet Union, the United Kingdom, the United States and by a majority of other signatories...
-
----
-
-**UN Charter - Signing and Ratification**
-URL: https://www.un.org/en/about-us/un-charter
-
-Excerpts:
-1. The Charter was signed on 26 June 1945 by the representatives of the 50 countries...
-```
-
-### Benefits for AI Agents
-
-- **Up-to-date Information**: Access current web content beyond the agent's training data
-- **Source Attribution**: All results include URLs for verification and citation
-- **Intelligent Search**: Parallel's API understands context and returns relevant results
-- **Token Efficient**: Agentic mode provides concise results optimized for multi-step reasoning
-- **Flexible**: Works seamlessly in agent workflows for research, fact-checking, and information gathering
-
-### Performance Considerations
-
-- The **agentic** mode is recommended for agent workflows as it provides token-efficient results
-- Use **fast** mode when latency is critical and speed is more important than comprehensive excerpts
-- Use **one-shot** mode for direct user queries where comprehensive results are needed
-- Learn more about search modes: [Parallel Search API Documentation](https://docs.parallel.ai/search-api)
+- Processing time depends on the complexity of the enrichment task and the processor selected
+- Consider the API rate limits when processing large datasets
+- Learn more about choosing the right processor: [Parallel AI Processor Guide](https://docs.parallel.ai/task-api/guides/choose-a-processor)
+-  Learn more about search modes: [Parallel Search API Documentation](https://docs.parallel.ai/search-api)
