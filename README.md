@@ -4,10 +4,11 @@ Dataiku plugin providing web data generation and enrichment capabilities powered
 
 ## Features
 
-This plugin provides two main components:
+This plugin provides three main components:
 
 1. **Dataset Connector**: Generate datasets from web searches using the Parallel FindAll API
 2. **Enrichment Recipe**: Enrich existing datasets with web-sourced information using the Parallel Task API
+3. **Agent Tool**: Enable AI agents to search the web intelligently using the Parallel Search API
 
 ---
 
@@ -152,3 +153,84 @@ You can use the enrichment recipe to add information to an existing dataset gene
 
 **Issue**: Empty output values
 - **Solution**: Check the `_enrichment_error` column (if "Continue on Error" is enabled) for error messages. Verify that your input columns contain valid data.
+
+---
+
+## Parallel Web Search Agent Tool
+
+This agent tool enables Dataiku AI agents to search the web intelligently using Parallel's Search API. The tool provides relevant web pages with titles, URLs, and text excerpts that agents can use to answer questions and gather information.
+
+### How It Works
+
+The tool uses Parallel's Search API to:
+1. Accept a natural language objective from the AI agent
+2. Execute intelligent web searches based on the objective
+3. Return relevant results with excerpts from web pages
+4. Provide source attribution for traceability
+
+### Configuration
+
+Configure the tool in **Plugins** → **Parallel web systems** → **Parallel Web Search**:
+
+#### Required Settings
+
+- **Parallel API Auth Preset**: Select your configured API key preset (e.g., "api-key")
+
+#### Optional Settings
+
+- **Search Mode**: Choose how the search is optimized (default: `agentic`)
+  - **one-shot**: Comprehensive results with longer excerpts - best for direct user queries
+  - **agentic**: Concise, token-efficient results for multi-step workflows (recommended for agents)
+  - **fast**: Optimized for latency-sensitive use cases (~1s response time)
+
+- **Max Results**: Maximum number of search results to return (1-20, default: 5)
+
+- **Max Characters Per Excerpt**: Maximum characters per excerpt from each result (100-10000, default: 1000)
+
+### Usage in AI Agents
+
+Once configured, the tool becomes available to your Dataiku AI agents. The agent simply needs to provide:
+
+- **objective**: A clear description of what information to find
+
+**Example agent queries:**
+- "When was the United Nations established? Prefer UN's websites."
+- "What are the latest developments in quantum computing?"
+- "Find information about renewable energy policies in California"
+
+### Example Output
+
+When an agent uses the tool, it receives structured results like:
+
+```
+Found 3 result(s) for objective: 'When was the United Nations established? Prefer UN's websites.'
+
+**United Nations - History**
+URL: https://www.un.org/en/about-us/history-of-the-un
+
+Excerpts:
+1. The United Nations officially came into existence on 24 October 1945, when the Charter had been ratified by China, France, the Soviet Union, the United Kingdom, the United States and by a majority of other signatories...
+
+---
+
+**UN Charter - Signing and Ratification**
+URL: https://www.un.org/en/about-us/un-charter
+
+Excerpts:
+1. The Charter was signed on 26 June 1945 by the representatives of the 50 countries...
+```
+
+### Benefits for AI Agents
+
+- **Up-to-date Information**: Access current web content beyond the agent's training data
+- **Source Attribution**: All results include URLs for verification and citation
+- **Intelligent Search**: Parallel's API understands context and returns relevant results
+- **Token Efficient**: Agentic mode provides concise results optimized for multi-step reasoning
+- **Flexible**: Works seamlessly in agent workflows for research, fact-checking, and information gathering
+
+### Performance Considerations
+
+- The **agentic** mode is recommended for agent workflows as it provides token-efficient results
+- Use **fast** mode when latency is critical and speed is more important than comprehensive excerpts
+- Use **one-shot** mode for direct user queries where comprehensive results are needed
+- Learn more about search modes: [Parallel Search API Documentation](https://docs.parallel.ai/search-api)
