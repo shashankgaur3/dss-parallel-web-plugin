@@ -1,0 +1,55 @@
+{
+    "meta": {
+        "label": "Parallel Web Search",
+        "description": "Search the web using Parallel's intelligent search API with excerpts",
+        "icon": "icon-search"
+    },
+    "params": [
+        {
+            "name": "api_auth",
+            "label": "Parallel API Auth Preset",
+            "type": "PRESET",
+            "parameterSetId": "parallel-api-key",
+            "mandatory": true,
+            "description": "Select a preset from the 'parallel-api-key' parameter set"
+        },
+        {
+            "name": "mode",
+            "label": "Search Mode",
+            "type": "SELECT",
+            "defaultValue": "one-shot",
+            "mandatory": true,
+            "selectChoices": [
+                {
+                    "value": "one-shot",
+                    "label": "One-shot (Comprehensive results with longer excerpts)"
+                },
+                {
+                    "value": "agentic",
+                    "label": "Agentic (Concise, token-efficient for multi-step workflows)"
+                },
+                {
+                    "value": "fast",
+                    "label": "Fast (Optimized for latency ~1s)"
+                }
+            ],
+            "description": "Search mode: 'one-shot' for comprehensive results, 'agentic' for multi-step workflows (recommended for agents), or 'fast' for low latency"
+        },
+        {
+            "name": "max_results",
+            "label": "Max Results",
+            "type": "INT",
+            "defaultValue": 5,
+            "mandatory": true,
+            "description": "Maximum number of search results to return (1-20)"
+        },
+        {
+            "name": "max_chars_per_excerpt",
+            "label": "Max Characters Per Excerpt",
+            "type": "INT",
+            "defaultValue": 1000,
+            "mandatory": true,
+            "description": "Maximum characters per excerpt from each result (100-10000)"
+        }
+    ]
+}
