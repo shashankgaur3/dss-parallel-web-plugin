@@ -1,0 +1,139 @@
+/* This file is the descriptor for the Custom python dataset parallel-web-systems_web-dataset-generator */
+{
+    "meta" : {
+        "label": "Parallel FindAll Dataset",
+        "description": "Fetch structured web data with Parallel FindAll API",
+        "icon": "fas fa-globe"
+    },
+
+    "readable": true,
+    "writable": false,
+    "supportAppend": false,
+
+    "params": [
+        {
+            "name": "api_auth",
+            "label": "Parallel API Auth Preset",
+            "type": "PRESET",
+            "parameterSetId": "parallel-api-key",
+            "mandatory": true,
+            "description": "Select a preset from the 'parallel-api-key' parameter set"
+        },
+        {
+            "name": "objective",
+            "label": "Objective",
+            "type": "TEXTAREA",
+            "mandatory": true,
+            "description": "Natural-language objective for FindAll ingest"
+        },
+        {
+            "name": "generator",
+            "label": "Generator",
+            "type": "SELECT",
+            "defaultValue": "base",
+            "selectChoices": [
+                {
+                    "value": "preview",
+                    "label": "preview"
+                },
+                {
+                    "value": "base",
+                    "label": "base"
+                },
+                {
+                    "value": "core",
+                    "label": "core"
+                },
+                {
+                    "value": "pro",
+                    "label": "pro"
+                }
+            ]
+        },   
+        {
+            "name": "match_limit",
+            "label": "Match Limit",
+            "type": "INT",
+            "defaultValue": 10
+        },
+        {
+            "name": "enable_enrichments",
+            "label": "Enable Enrichments",
+            "type": "BOOLEAN",
+            "defaultValue": false
+        },
+        {
+            "name": "enrichment_fields",
+            "label": "Enrichment Fields",
+            "type": "OBJECT_LIST",
+            "visibilityCondition": "model.enable_enrichments",
+            "description": "Optional enrichment output fields as a structured list",
+            "subParams": [
+                {
+                    "name": "name",
+                    "label": "Column name",
+                    "type": "STRING",
+                    "mandatory": true
+                },
+                {
+                    "name": "type",
+                    "label": "Type",
+                    "type": "SELECT",
+                    "mandatory": true,
+                    "defaultValue": "string",
+                    "selectChoices": [
+                        {
+                            "value": "string",
+                            "label": "string"
+                        },
+                        {
+                            "value": "int",
+                            "label": "int"
+                        },
+                        {
+                            "value": "float",
+                            "label": "float"
+                        },
+                        {
+                            "value": "bool",
+                            "label": "bool"
+                        }
+                    ]
+                },
+                {
+                    "name": "description",
+                    "label": "Description",
+                    "type": "STRING",
+                    "mandatory": true
+                }
+            ]
+        },
+        {
+            "name": "advanced_settings",
+            "label": "Advanced settings",
+            "type": "BOOLEAN",
+            "defaultValue": false
+        },
+        {
+            "name": "poll_interval_seconds",
+            "label": "Poll Interval (s)",
+            "type": "INT",
+            "defaultValue": 5,
+            "visibilityCondition": "model.advanced_settings"
+        },
+        {
+            "name": "max_wait_seconds",
+            "label": "Max Wait (s)",
+            "type": "INT",
+            "defaultValue": 300,
+            "visibilityCondition": "model.advanced_settings"
+        },{
+            "name": "include_citations",
+            "label": "Include Citations",
+            "type": "BOOLEAN",
+            "defaultValue": false,
+            "visibilityCondition": "model.advanced_settings",
+            "description": "When enabled, include candidate basis/citation & reasoning details in a spearate column."
+        }
+    ]
+}
