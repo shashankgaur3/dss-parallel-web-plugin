@@ -83,12 +83,20 @@ class CustomAgentTool(BaseAgentTool):
         # Extract objective from agent input
         objective = args.get("objective", "")
 
+        # Log inputs and config to trace
+        trace.span["name"] = "PARALLEL_WEB_SEARCH_TOOL_CALL"
+        trace.inputs["objective"] = objective
+        trace.attributes["config"] = {
+            "mode": self.mode,
+            "max_results": self.max_results,
+            "max_chars_per_excerpt": self.max_chars_per_excerpt
+        }
+
         if not objective:
+            trace.outputs["error"] = "Missing objective parameter"
             return {
                 "output": "Error: 'objective' parameter is required.",
-                "sources": [{
-                    "toolCallDescription": "Search failed: missing objective"
-                }]
+                "sources": []
             }
 
         try:
@@ -103,59 +111,92 @@ class CustomAgentTool(BaseAgentTool):
                 excerpts={"max_chars_per_result": self.max_chars_per_excerpt}
             )
 
-            # Format results
-            results_list = []
-            sources_list = []
+            # Process results
+            tool_output, tool_sources = self._process_search_results(search, objective)
 
-            result_count = 0
-            for result in search.results:
-                if result_count >= self.max_results:
-                    break
+            # Log tool outputs to Trace
+            trace.outputs["result_count"] = len(tool_sources) if tool_sources else 0
+            trace.outputs["tool_output"] = tool_output
 
-                result_text = f"**{result.title}**\nURL: {result.url}\n\n"
-
-                # Add excerpts
-                if hasattr(result, 'excerpts') and result.excerpts:
-                    result_text += "Excerpts:\n"
-                    for i, excerpt in enumerate(result.excerpts, 1):
-                        # Truncate excerpt if needed
-                        excerpt_text = excerpt[:self.max_chars_per_excerpt] if len(excerpt) > self.max_chars_per_excerpt else excerpt
-                        result_text += f"{i}. {excerpt_text}\n\n"
-
-                results_list.append(result_text)
-
-                # Add to sources for traceability
-                sources_list.append({
-                    "title": result.title,
-                    "url": result.url,
-                    "toolCallDescription": f"Search result: {result.title}"
-                })
-
-                result_count += 1
-
-            # Combine all results
-            if results_list:
-                output = f"Found {result_count} result(s) for objective: '{objective}'\n\n" + "\n---\n\n".join(results_list)
-            else:
-                output = f"No results found for objective: '{objective}'"
-
-            logger.info(f"Search completed successfully with {result_count} results")
+            logger.info(f"Search completed successfully with {len(tool_sources) if tool_sources else 0} results")
 
             return {
-                "output": output,
-                "sources": sources_list if sources_list else [{
-                    "toolCallDescription": f"Searched web for: {objective}"
-                }]
+                "output": tool_output,
+                "sources": tool_sources
             }
 
         except Exception as e:
             logger.error(f"Error during Parallel search: {str(e)}", exc_info=True)
+            trace.outputs["error"] = str(e)
             return {
                 "output": f"Error during search: {str(e)}",
-                "sources": [{
-                    "toolCallDescription": f"Search failed: {str(e)}"
-                }]
+                "sources": []
             }
+
+    def _process_search_results(self, search, objective):
+        """
+        Process search results and format them for DSS Agent Tools.
+
+        Args:
+            search: Search response from Parallel API
+            objective: The search objective
+
+        Returns:
+            tuple: (formatted output text, formatted sources list)
+        """
+        results_list = []
+        sources_items = []
+
+        result_count = 0
+        for result in search.results:
+            if result_count >= self.max_results:
+                break
+
+            # Format output text
+            result_text = f"**{result.title}**\nURL: {result.url}\n\n"
+
+            # Collect all excerpts for this result
+            all_excerpts = ""
+            if hasattr(result, 'excerpts') and result.excerpts:
+                result_text += "Excerpts:\n"
+                for i, excerpt in enumerate(result.excerpts, 1):
+                    # Truncate excerpt if needed
+                    excerpt_text = excerpt[:self.max_chars_per_excerpt] if len(excerpt) > self.max_chars_per_excerpt else excerpt
+                    result_text += f"{i}. {excerpt_text}\n\n"
+                    all_excerpts += excerpt_text + " "
+
+            results_list.append(result_text)
+
+            # Format source item according to DSS specification
+            text_snippet = all_excerpts[:300].strip() if all_excerpts else result.title
+            if len(all_excerpts) > 300:
+                text_snippet += " ..."
+
+            sources_items.append({
+                "type": "SIMPLE_DOCUMENT",
+                "url": result.url,
+                "title": result.title,
+                "textSnippet": text_snippet
+            })
+
+            result_count += 1
+
+        # Format tool output
+        if results_list:
+            tool_output = f"Found {result_count} result(s) for objective: '{objective}'\n\n" + "\n---\n\n".join(results_list)
+        else:
+            tool_output = f"No results found for objective: '{objective}'"
+
+        # Format tool sources according to DSS specification
+        if sources_items:
+            tool_sources_fmt = [{
+                "toolCallDescription": f"Performed Parallel Web Search for: {objective}",
+                "items": sources_items
+            }]
+        else:
+            tool_sources_fmt = []
+
+        return tool_output, tool_sources_fmt
 
     def load_sample_query(self, tool):
         """
